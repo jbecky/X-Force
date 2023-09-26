@@ -23,7 +23,7 @@ def cdc_query(cas = None, chemical = None):
             if len(chemical_cas_numbers) > 1:
                 print(f"The chemical {chemical} corresponds to multiple CAS numbers: {chemical_cas_numbers}.")
                 query = f"SELECT * FROM {table} WHERE CAS IN ({','.join(['?' for _ in chemical_cas_numbers])})"
-                params = tuple(chemical_cas_numbers)  # Convert list to tuple
+                params = tuple(chemical_cas_numbers)
             elif not chemical_cas_numbers:
                 matches = process.extract(chemical, [name for names in final_synonyms_dict.values() for name in names], limit=5)
                 if matches:
@@ -126,38 +126,27 @@ def aux_query(cas = None, chemical = None):
     return results
 
 def query_all(cas_list = None, chemical_list = None):
-    # Checking for input validity
     if not cas_list and not chemical_list:
         raise ValueError("Must specify either CAS numbers list and/or chemical names list")
-    
-    # Ensure both cas_list and chemical_list are lists (even if they contain only one item)
     if cas_list and not isinstance(cas_list, list):
         cas_list = [cas_list]
     if chemical_list and not isinstance(chemical_list, list):
         chemical_list = [chemical_list.upper() for chemical in chemical_list]
-
-    # Looping over the provided CAS numbers and chemical names
     for idx, (cas, chemical) in enumerate(zip(cas_list or [None] * len(chemical_list), chemical_list or [None] * len(cas_list))):
         df_cdc = cdc_query(cas, chemical)
         df_trv = trv_query(cas, chemical)
         aux_data = aux_query(cas, chemical)
-        
-        # Creating a unique file name for each chemical/CAS 
         filename = f"/Users/jackbecker/xforce/CDC_Webscraping/query_all_output_{idx}.xlsx"
-        
-        # Ensure no overwrite happens
         counter = 1
         while os.path.exists(filename):
             filename = f"/Users/jackbecker/xforce/CDC_Webscraping/query_all_output_{idx}_{counter}.xlsx"
             counter += 1
-        
-        with pd.ExcelWriter(filename, engine='openpyxl') as writer:
+        with pd.ExcelWriter(filename, engine = 'openpyxl') as writer:
             if not df_cdc.empty:
-                df_cdc.to_excel(writer, sheet_name='CDC Data', index=False)
+                df_cdc.to_excel(writer, sheet_name = 'CDC Data', index = False)
             if not df_trv.empty:
-                df_trv.to_excel(writer, sheet_name='TRV Data', index=False)
+                df_trv.to_excel(writer, sheet_name = 'TRV Data', index = False)
             for table, df in aux_data.items():
                 if not df.empty:
-                    df.to_excel(writer, sheet_name=table, index=False)
-        
+                    df.to_excel(writer, sheet_name = table, index = False)
         print(f"Data for {chemical or cas} saved to {filename}")

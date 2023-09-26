@@ -3,13 +3,14 @@ import pandas as pd
 import os
 from queries import cdc_query, trv_query, aux_query, query_all  
 
+# General-format unit test for queries.py. Sample chemicals and expected outputs have to be imported for it to run.
+
 class TestQueries(unittest.TestCase):
     def test_cdc_query(self):
-        cas_test_values = ["SAMPLE_CAS_1", "SAMPLE_CAS_2"]  # Put real CAS numbers here for testing
-        expected_outputs = []  # Put expected dataframes here
+        cas_test_values = ["SAMPLE_CAS_1", "SAMPLE_CAS_2"]
+        expected_outputs = [] 
         for cas, expected_output in zip(cas_test_values, expected_outputs):
             result = cdc_query(cas = cas)
-            # Checks if dataframes are equal, may need adjustment to accomodate for negligible differences
             pd.testing.assert_frame_equal(result, expected_output)
 
     def test_trv_query(self):

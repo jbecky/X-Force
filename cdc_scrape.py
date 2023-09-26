@@ -20,7 +20,7 @@ def init_soup(url):
 
 def get_url_1_all():
     url_1_all = []
-    for code in range(0, max_code): # was originally (42, max_code)
+    for code in range(0, max_code):
         num_str = str(code).zfill(4)
         url = f"https://www.cdc.gov/niosh/npg/npgd{num_str}.html"
         if is_valid(url):
@@ -53,7 +53,7 @@ def get_rtecs_no_2(url_2):
 def get_cas_no(url):
     soup = init_soup(url)
     tagged = soup.find_all(class_= "card-text")
-    if len(tagged) > 1:  # Ensure the list has at least 2 elements
+    if len(tagged) > 1: 
         cas = tagged[1].text.split('\n')[1]
         cas = cas.replace('\r', '')
         cas = cas.strip()
@@ -64,7 +64,7 @@ def get_cas_no(url):
 def get_mol_weight(url):
     soup = init_soup(url)
     tagged = soup.find_all("div", class_ = "card-text")
-    if len(tagged) > 3:  # Check if the list has at least 4 elements
+    if len(tagged) > 3:
         return tagged[3].string.strip()
     else:
         return "NOT FOUND"
@@ -72,7 +72,7 @@ def get_mol_weight(url):
 def get_synonyms(url):
     soup = init_soup(url)
     tagged = soup.find_all("div", class_ = "card-text")
-    if len(tagged) >= 6:  # Ensure there's enough divs
+    if len(tagged) >= 6: 
         synonyms_html = str(tagged[5])
         synonyms = synonyms_html.split('<br/>')
         cleaned_synonyms = [BeautifulSoup(s, "html.parser").get_text().strip() for s in synonyms]
@@ -83,26 +83,26 @@ def get_synonyms(url):
 def get_tox(url):
     soup = init_soup(url)
     h2_tag = soup.find("h2", text = "Acute Toxicity Data and References")
-    if h2_tag:  # Check if h2_tag exists
+    if h2_tag: 
         table = h2_tag.find_next("table", class_ = "table table-striped")
-        if table:  # Check if table exists
+        if table: 
             headers = [header.get_text().strip() for header in table.find_all("th")]
             rows = table.find_all("tr")
             table_data = []
-            for row in rows[1:]:  # skip header row
+            for row in rows[1:]:
                 cols = row.find_all("td")
-                if len(cols) >= 3:  # Check if there are at least 3 columns
+                if len(cols) >= 3:
                     data_dict = {
-                        "ROUTE/ORGANISM": cols[0].get_text().strip(),  # Route/Organism
-                        "DOSE": cols[1].get_text().strip(),  # Dose
-                        "EFFECT": cols[2].get_text().strip() if cols[2].get_text().strip() else 'NO EFFECT REPORTED'  # Effect
+                        "ROUTE/ORGANISM": cols[0].get_text().strip(), 
+                        "DOSE": cols[1].get_text().strip(), 
+                        "EFFECT": cols[2].get_text().strip() if cols[2].get_text().strip() else 'NO EFFECT REPORTED' 
                     }
                     for key in data_dict:
                         data_dict[key] = ' '.join(data_dict[key].split())
                     table_data.append(data_dict)
             df = pd.DataFrame(table_data)
             return df
-    return pd.DataFrame()  # return an empty DataFrame if no table is found
+    return pd.DataFrame()
 
 def build_df():
     url_1_all = get_url_1_all()

@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 import time
 import json
 
+# When I originally coded cdc_scrape.py, I forgot to scrape the primary chemical names from each header, so 
+#   I made this file to re-scrape and merge these names with the rest of the synonyms.
+
 def is_valid(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')

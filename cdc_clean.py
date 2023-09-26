@@ -2,13 +2,11 @@ import pandas as pd
 import re
 import warnings
 
-# Suppress an intel warning that doesn't matter
+# Suppresses an intel warning specific to my computer
 warnings.filterwarnings("ignore")
 
-# Notes:
-# Around a dozen entries were manually processed after running cdc_clean.py. A few of these were removed
+# Note: Around a dozen entries were manually processed after running cdc_clean.py. Some of these were removed
 #    for not meeting the criteria of an acute toxicity study.
-# Clean up dictionary/elminate entries that are not needed.
 
 type_dict = {
     "lethal concentration (50 percent kill)": "LC50",

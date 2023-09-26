@@ -1,18 +1,13 @@
 import sqlite3
 import json
 
-## merge_synonyms.py updates
-
 def get_unique_synonyms():
     db_path = "/Users/jackbecker/xforce/CDC_Webscraping/tox_database.db"
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     synonyms_dict = {}
-
-    # Read the prim_name_dict.json file as a dictionary
     with open('primary_name_dict.json', 'r') as f:
         primary_name_dict = json.load(f)
-
     cur.execute("SELECT * FROM synonyms;")
     rows = cur.fetchall()
     for row in rows:
@@ -39,8 +34,6 @@ def get_unique_synonyms():
                 if synonyms:
                     synonyms = [syn.strip() for syn in synonyms.strip("[]").split(',')]
                     synonyms_dict.setdefault(cas_number, set()).update(synonyms)
-
-    # Add each chemical name to the synonyms_dict using its CAS number as the key
     for cas_number, chem_name in primary_name_dict.items():
         cas_numbers = cas_number.split(";")
         for cas_number in cas_numbers:
